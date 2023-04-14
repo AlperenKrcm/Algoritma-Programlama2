@@ -1,0 +1,136 @@
+import pypyodbc
+db = pypyodbc.connect(
+    'Driver={SQL Server};'
+    'Server=BOZKURT\SQLSERVER23;'
+    'Database=misafirTakip;'
+    'Trusted_Connection=True;'
+)
+imlec = db.cursor()
+
+kullaniciKaydi = "INSERT INTO Kullanicilar VALUES(?,?,?) "
+kullaniciAdi=""
+kullaniciSifre=""
+kullaniciVeriler=(kullaniciAdi,0,kullaniciSifre)
+# x=imlec.execute(kullaniciKaydi,kullaniciVeriler)
+
+kullaniciSifremiUnuttum="UPDATE Kullanicilar SET Sifre=(?) WHERE kullaniciAdi=(?)"
+kullaniciYeniSifre=""
+kullaniciUpdate=""
+kullaniciSifreYenileme=(kullaniciYeniSifre,kullaniciUpdate)
+#x=imlec.execute(kullaniciSifremiUnuttum,kullaniciYeniSifre,kullaniciAdi)
+
+kullaniciGiris="SELECT Sifre FROM Kullanicilar WHERE kullaniciAdi=(?)  "
+Ad=""
+Sifre=""
+#y=imlec.execute(kullaniciGiris,Ad)
+#dogrulama=y.fetchall()
+#if(dogrulama==Sifre) go
+
+evKaydi="INSERT INTO Evler (?,?,?)"
+yatakSayisi=1
+evSehir=58
+kiralanmaDurumu=0
+evVeriler=(yatakSayisi,evSehir,kiralanmaDurumu)
+#z=imlec.execute(evKaydi,evVeriler)
+
+aileKaydi=" INSERT INTO Aile (?,?,?,?,?,?) "
+olusturanTC=12345678910
+aileSehir=58
+kisiSayisi=0
+oncelikliBireySayisi=0
+engelliBireySayisi=0
+yerlestirilmeDurumu=0
+ailePuan=0
+int(ailePuan)
+#ailePuan=kisiSayisi+(engelliBireySayisi*2,5)+(oncelikliBireySayisi*2)
+aileVeriler=(olusturanTC,kisiSayisi,engelliBireySayisi,oncelikliBireySayisi,0,ailePuan)
+#t=imlec.execute(aileKaydi,aileVeriler)
+
+menuSekme=1905
+
+while True:
+    print("Kullanici kaydi olusturmak icin 1,")
+    print("Sifre sifirlamak icin 2,")
+    print("Giris yapmak icin 3 tuslayiniz")
+    
+    menuSekme=int(input())
+    
+    print(menuSekme)
+    if menuSekme==1:
+        print("Lutfen sirasiyla kullanici adi ve sifrenizi giriniz")
+        kullaniciAdi=input()
+        kullaniciSifre=input()
+        kullaniciVeriler=(kullaniciAdi,0,kullaniciSifre)
+        x=imlec.execute(kullaniciKaydi,kullaniciVeriler)
+        db.commit()
+        print("Kullanıcı kaydi yapildi")
+        continue
+    elif menuSekme==2: 
+       kullaniciAdUpdate= input("Lutfen kullanici adinizi giriniz")
+       kullaniciYeniSifre= input("Lutfen yeni sifrenizi giriniz")
+       
+       kullaniciSifreYenileme=(kullaniciYeniSifre,kullaniciAdUpdate)
+       x=imlec.execute(kullaniciSifremiUnuttum,kullaniciSifreYenileme) # hata atabilir
+       db.commit()
+       continue
+    elif menuSekme==3:
+        Ad=input("Lutfen kullanici adinizi giriniz")
+        adDizi=(Ad,)
+        Sifre=input("Lutfen sifrenizi giriniz")
+        y=imlec.execute(kullaniciGiris,adDizi)
+        dogrulama=y.fetchall()
+        ali=str(dogrulama[0])
+   
+        Sifre="('"+Sifre+"',)"
+        if ali!=Sifre:
+            print("Yanlis sifre girdiniz")
+            continue
+        else: 
+            print("Tebrikler giris basarili")
+            menuSekme=4
+            
+    if menuSekme==4 :
+         break
+     
+           
+        
+
+while Ad=="admin": #ilerleyen aşamalarda yetkiId ile giriş sağlanacak bir kullanıcı admin adını alırsa sistem hatalı oluyor.
+    yatakSayisi=input("Lutfen sirasiyla evdeki yatak sayisini, evin bulundugu sehrin plakasini giriniz")
+    evSehir=input("Lutfen evin bulunduğu sehrin plakasini giriniz")
+    kiralanmaDurumu=0
+    evVeriler=(yatakSayisi,evSehir,kiralanmaDurumu)
+    z=imlec.execute(evKaydi,evVeriler)
+    db.commit()
+
+    menuSekme=input("tebrikler ev kaydiniz yapildi, baska bir kayit yapmak icin 1 tuslayiniz")
+    if menuSekme==1:
+        continue
+    else:
+        break
+
+while True:
+    print("Lutfen sirasiyla kendi TC'nizi, ailenin kalmak istedigi sehrin plakasini,")
+    print("ailenin kisi sayisini,aiedeki 0-18, 65+ yasindaki kisi sayisini,")
+    print("ailedeki engelli birey sayisini giriniz")
+    olusturanTC=input()
+    aileSehir=input()
+    kisiSayisi=int(input())    
+    oncelikliBireySayisi=int(input())
+    engelliBireySayisi=int(input())
+    yerlestirilmeDurumu=0
+    
+    ailePuan=int(kisiSayisi)+int(engelliBireySayisi)*2,5+int(oncelikliBireySayisi)*2
+    aileVeriler=(olusturanTC,kisiSayisi,engelliBireySayisi,oncelikliBireySayisi,0,ailePuan)
+    q=imlec.execute(aileKaydi,aileVeriler)
+    db.commit()
+    print("Aile kaydiniz yapilmistir. baska bir kayit yapmak icin 1 tuslayiniz")
+    menuSekme=input()
+    if menuSekme==1:
+        continue
+    else:
+        break
+
+
+
+
